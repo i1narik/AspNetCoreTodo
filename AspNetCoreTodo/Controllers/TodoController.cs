@@ -23,5 +23,20 @@ namespace AspNetCoreTodo.Controllers
             };
             return View(model);
         }
+
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AddItem(TodoItem todoItem)
+        {
+            if (!ModelState.IsValid)
+            {
+                return RedirectToAction("Index");
+            }
+            var succesfull = await _todoItemService.AddItemAsync(todoItem);
+            if (!succesfull)
+            {
+                return BadRequest("Could not add item");
+            }
+            return RedirectToAction("Index");
+        }
     }
 }

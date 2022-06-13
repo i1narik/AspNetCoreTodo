@@ -1,8 +1,8 @@
 ﻿using AspNetCoreTodo.Data;
 using AspNetCoreTodo.Models;
-using System.Threading.Tasks;
-using System.Linq;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace AspNetCoreTodo.Services
 {
@@ -14,7 +14,17 @@ namespace AspNetCoreTodo.Services
         {
             _context = context;
         }
-    
+
+        public async Task<bool> AddItemAsync(TodoItem todoItem)
+        {
+            todoItem.Id = new System.Guid();
+            todoItem.IsDone = false;
+            todoItem.DueAt = System.DateTimeOffset.Now.AddDays(3);
+            _context.Items.Add(todoItem);
+            var saveResult = await _context.SaveChangesAsync();
+            return saveResult == 1;
+        }
+
         public async Task<TodoItem[]> GetIncompleteItemsAsync()
         {
             var items = await _context.Items.Where(x => x.IsDone == false).ToArrayAsync();
